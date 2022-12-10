@@ -4,6 +4,7 @@ import seaborn as sns
 import numpy as np
 from sqlalchemy import create_engine
 
+# Code contains some debug prints, which should be removed before production usage
 # Data was downloaded in .csv format through QGIS
 # Also imported the sqlite format from QGIS but not used in this task
 data = pd.read_csv('rakennukset_piste_rekisteritiedot.csv')
@@ -13,13 +14,11 @@ data = pd.read_csv('rakennukset_piste_rekisteritiedot.csv')
 cleaned_data = data.drop(columns=['i_pyraknro', 'c_vtj_prt','c_kiinteistotunnus','i_nkoord', 'i_ekoord','c_julkisivu', 'c_lammtapa', 'c_poltaine', 'c_rakeaine', 'c_hissi','c_viemlii', 'c_vesilii',
     'c_sahkolii', 'katunimi_suomi', 'katunimi_ruotsi', 'osoitenumero']).fillna(0)
 cleaned_data['c_valmpvm'] = pd.to_datetime(cleaned_data['c_valmpvm'], format='%Y/%m/%d %H:%M:%S', errors = 'coerce').dt.strftime('%Y-%m-%d %H:%M:%S')
-print(cleaned_data.iloc[0])
+#print(cleaned_data.iloc[0])
 
 # db stuff, setting data to sqlite db table
 engine = create_engine('sqlite:///buildings.db')
 cleaned_data.to_sql(name='buildings', con=engine, if_exists='replace')
-result = pd.read_sql_query("SELECT * FROM buildings", engine)
-#print(result)
 
 # 2.  calculate how the fraction of residential buildings in all buildings (floor area) has developed over the last three years.
 # floor area of all residential buildings from year 2022-2020 / floor area of all buildings from year 2022-2020
